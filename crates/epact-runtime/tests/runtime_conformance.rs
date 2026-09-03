@@ -2,9 +2,10 @@ use epact_compiler::compile_program as compile_epact_program;
 use epact_protocol::{
     EffectClass, EpactAmendmentPolicy, EpactAuthorityGrant, EpactAuthorityScope,
     EpactCapabilityRequirement, EpactDischarge, EpactEvidenceRule, EpactObjectDeclaration,
-    EpactObligation, EpactPrincipal, EpactProgram, EpactResourceEnvelope, EpactRuntimeEvent,
-    EpactRuntimeEventKind, EpactTerminalRule, KernelOperation, PrincipalKind, ProgramLifecycle,
-    ReversibilityClass, ReversibilityPolicy, EPACT_PROGRAM_CONTRACT,
+    EpactObligation, EpactPlacementClaim, EpactPlacementConstraint, EpactPlacementKind,
+    EpactPrincipal, EpactProgram, EpactResourceEnvelope, EpactRuntimeEvent, EpactRuntimeEventKind,
+    EpactTerminalRule, KernelOperation, PrincipalKind, ProgramLifecycle, ReversibilityClass,
+    ReversibilityPolicy, EPACT_PROGRAM_CONTRACT,
 };
 use epact_runtime::{
     epact_program_is_terminal, evaluate_epact_operation, initial_epact_state, replay_epact_events,
@@ -258,6 +259,70 @@ fn authority_is_ineligible_outside_its_compiled_time_window() {
 }
 
 #[test]
+fn one_program_image_preserves_semantics_across_qualified_placements() {
+    let mut source = program();
+    source.capabilities[0].placement = Some(EpactPlacementConstraint {
+        allowed_kinds: vec![EpactPlacementKind::Managed, EpactPlacementKind::Local],
+        required_target_capabilities: vec!["cpu".to_owned()],
+        requires_disconnect_safety: true,
+    });
+    let image = compile_epact_program(source).unwrap();
+    let image_sha256 = image.image_sha256.clone();
+    let state = initial_epact_state(&image).unwrap();
+
+    for kind in [EpactPlacementKind::Local, EpactPlacementKind::Managed] {
+        let mut candidate = request(
+            "principal:agent",
+            KernelOperation::Dispatch,
+            "analyze",
+            Some("capability:analyze"),
+            vec![EffectClass::ReadOnly],
+            EpactResourceEnvelope {
+                maximum_cpu_cores: 1.0,
+                maximum_ram_gb: 2.0,
+                maximum_tool_calls: 1,
+                ..EpactResourceEnvelope::default()
+            },
+        );
+        candidate.placement = Some(EpactPlacementClaim {
+            kind,
+            target_capabilities: vec!["cpu".to_owned()],
+            disconnect_safe: true,
+        });
+        assert!(
+            evaluate_epact_operation(&image, &state, &candidate)
+                .unwrap()
+                .allowed
+        );
+        assert_eq!(image.image_sha256, image_sha256);
+    }
+
+    let denied = evaluate_epact_operation(
+        &image,
+        &state,
+        &request(
+            "principal:agent",
+            KernelOperation::Dispatch,
+            "analyze",
+            Some("capability:analyze"),
+            vec![EffectClass::ReadOnly],
+            EpactResourceEnvelope {
+                maximum_cpu_cores: 1.0,
+                maximum_ram_gb: 2.0,
+                maximum_tool_calls: 1,
+                ..EpactResourceEnvelope::default()
+            },
+        ),
+    )
+    .unwrap();
+    assert!(!denied.allowed);
+    assert!(denied
+        .blockers
+        .iter()
+        .any(|blocker| blocker.code == "placement_required"));
+}
+
+#[test]
 fn any_of_discharge_accepts_evidence_or_an_explicit_decision_but_not_neither() {
     let mut source = program();
     source.objects.extend([
@@ -389,6 +454,7 @@ fn review_discharge_requires_a_recorded_artifact_and_distinct_reviewer() {
         contract: "concord.review/1".to_owned(),
         required_effects: vec![EffectClass::ReadOnly],
         required_data_classes: vec![],
+        placement: None,
     });
     source
         .authorities
@@ -515,6 +581,7 @@ fn request(
         capability_id: capability_id.map(str::to_owned),
         effects,
         resources,
+        placement: None,
     }
 }
 
@@ -550,6 +617,7 @@ fn program() -> EpactProgram {
             contract: "example.analysis/1".to_owned(),
             required_effects: vec![EffectClass::ReadOnly],
             required_data_classes: vec![],
+            placement: None,
         }],
         authorities: vec![
             authority(

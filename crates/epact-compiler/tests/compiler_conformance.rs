@@ -5,9 +5,10 @@ use epact_compiler::{
 use epact_protocol::{
     EffectClass, EpactAmendmentPolicy, EpactAuthorityGrant, EpactAuthorityScope,
     EpactCapabilityRequirement, EpactDischarge, EpactEvidenceRule, EpactGate,
-    EpactObjectDeclaration, EpactObligation, EpactPredicate, EpactPrincipal, EpactProgram,
-    EpactProgramRef, EpactResourceEnvelope, EpactTerminalRule, KernelOperation, PrincipalKind,
-    ProgramLifecycle, ReversibilityClass, ReversibilityPolicy, EPACT_PROGRAM_CONTRACT,
+    EpactObjectDeclaration, EpactObligation, EpactPlacementConstraint, EpactPredicate,
+    EpactPrincipal, EpactProgram, EpactProgramRef, EpactResourceEnvelope, EpactTerminalRule,
+    KernelOperation, PrincipalKind, ProgramLifecycle, ReversibilityClass, ReversibilityPolicy,
+    EPACT_PROGRAM_CONTRACT,
 };
 
 #[test]
@@ -22,6 +23,20 @@ fn frozen_program_compiles_to_an_activatable_replayable_image() {
     );
     verify_program_image(&image).unwrap();
     require_activatable(&image).unwrap();
+}
+
+#[test]
+fn declared_placement_policy_must_admit_a_concrete_kind() {
+    let mut source = program();
+    source.capabilities[0].placement = Some(EpactPlacementConstraint {
+        allowed_kinds: vec![],
+        required_target_capabilities: vec!["cpu".to_owned()],
+        requires_disconnect_safety: false,
+    });
+    assert!(matches!(
+        compile_program(source),
+        Err(EpactCompileError::EmptyPlacementPolicy(id)) if id == "capability:analyze"
+    ));
 }
 
 #[test]
@@ -368,6 +383,7 @@ fn program() -> EpactProgram {
             contract: "example.analysis/1".to_owned(),
             required_effects: vec![EffectClass::ReadOnly],
             required_data_classes: vec![],
+            placement: None,
         }],
         authorities: vec![
             authority(

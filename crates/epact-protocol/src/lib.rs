@@ -130,6 +130,40 @@ pub struct EpactObjectDeclaration {
     pub data_classes: Vec<String>,
 }
 
+/// Provider-neutral execution locality. Concrete target identities and adapters remain runtime
+/// records; a program only declares which classes are semantically admissible.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum EpactPlacementKind {
+    Local,
+    Container,
+    Ssh,
+    Hpc,
+    Managed,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct EpactPlacementConstraint {
+    pub allowed_kinds: Vec<EpactPlacementKind>,
+    #[serde(default)]
+    pub required_target_capabilities: Vec<String>,
+    #[serde(default)]
+    pub requires_disconnect_safety: bool,
+}
+
+/// Kernel-observed properties of one qualified placement target. This is evaluated against the
+/// program but excluded from program-image identity.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct EpactPlacementClaim {
+    pub kind: EpactPlacementKind,
+    #[serde(default)]
+    pub target_capabilities: Vec<String>,
+    #[serde(default)]
+    pub disconnect_safe: bool,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactCapabilityRequirement {
@@ -140,6 +174,8 @@ pub struct EpactCapabilityRequirement {
     pub required_effects: Vec<EffectClass>,
     #[serde(default)]
     pub required_data_classes: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub placement: Option<EpactPlacementConstraint>,
 }
 
 /// A closed program-wide ceiling. Zero means that the corresponding resource is not authorized.
@@ -668,6 +704,8 @@ pub struct EpactOperationRequest {
     pub effects: Vec<EffectClass>,
     #[serde(default)]
     pub resources: EpactResourceEnvelope,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub placement: Option<EpactPlacementClaim>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

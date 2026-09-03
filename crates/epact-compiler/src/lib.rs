@@ -187,6 +187,11 @@ fn normalize_program(program: &mut EpactProgram) -> Result<(), EpactCompileError
         capability.required_effects.sort();
         capability.required_effects.dedup();
         sort_dedup(&mut capability.required_data_classes);
+        if let Some(placement) = &mut capability.placement {
+            placement.allowed_kinds.sort();
+            placement.allowed_kinds.dedup();
+            sort_dedup(&mut placement.required_target_capabilities);
+        }
     }
     for authority in &mut program.authorities {
         authority.operations.sort();
@@ -336,6 +341,17 @@ fn validate_program(program: &EpactProgram) -> Result<(), EpactCompileError> {
         require_text("capability type", &capability.capability_type, 240)?;
         require_text("capability contract", &capability.contract, 240)?;
         validate_set("capability data class", &capability.required_data_classes)?;
+        if let Some(placement) = &capability.placement {
+            if placement.allowed_kinds.is_empty() {
+                return Err(EpactCompileError::EmptyPlacementPolicy(
+                    capability.id.clone(),
+                ));
+            }
+            validate_set(
+                "placement target capability",
+                &placement.required_target_capabilities,
+            )?;
+        }
     }
     for authority in &program.authorities {
         require_text("authority id", &authority.id, 240)?;
@@ -1175,6 +1191,8 @@ pub enum EpactCompileError {
     DischargeTooDeep(String),
     #[error("obligation {0} does not declare all effects required by its capability")]
     CapabilityEffectMismatch(String),
+    #[error("capability {0} has an empty placement policy")]
+    EmptyPlacementPolicy(String),
     #[error("obligation {obligation_id} has invalid reversibility: {message}")]
     InvalidReversibility {
         obligation_id: String,

@@ -120,6 +120,7 @@ fn fixture_program() -> EpactProgram {
             contract: "example.analysis/1".to_owned(),
             required_effects: vec![EffectClass::ReadOnly],
             required_data_classes: vec![],
+            placement: None,
         }],
         authorities: vec![
             EpactAuthorityGrant {
@@ -240,5 +241,6 @@ fn request(effects: Vec<EffectClass>) -> EpactOperationRequest {
             maximum_ram_gb: 2.0,
             ..EpactResourceEnvelope::default()
         },
+        placement: None,
     }
 }

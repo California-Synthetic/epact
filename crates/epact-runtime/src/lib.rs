@@ -776,6 +776,24 @@ fn evaluate_obligation_request(
         );
     }
 
+    if let Some(capability_id) = request.capability_id.as_deref() {
+        if let Some(capability) = image
+            .program
+            .capabilities
+            .iter()
+            .find(|capability| capability.id == capability_id)
+        {
+            evaluate_placement_request(capability, request, blockers);
+        }
+    } else if request.placement.is_some() {
+        blocker(
+            blockers,
+            "unexpected_placement",
+            &obligation.id,
+            "placement may only bind a declared capability",
+        );
+    }
+
     if operation_requires_ready_obligation(request.operation) {
         for dependency in &obligation.dependency_ids {
             if obligation_state(state, dependency) != Some(EpactObligationState::Satisfied) {
@@ -797,6 +815,60 @@ fn evaluate_obligation_request(
                 );
             }
         }
+    }
+}
+
+fn evaluate_placement_request(
+    capability: &epact_protocol::EpactCapabilityRequirement,
+    request: &EpactOperationRequest,
+    blockers: &mut Vec<EpactEligibilityBlocker>,
+) {
+    let Some(policy) = &capability.placement else {
+        return;
+    };
+    let Some(claim) = &request.placement else {
+        blocker(
+            blockers,
+            "placement_required",
+            &capability.id,
+            "this capability requires a qualified placement claim",
+        );
+        return;
+    };
+    if !policy.allowed_kinds.contains(&claim.kind) {
+        blocker(
+            blockers,
+            "placement_kind_denied",
+            &capability.id,
+            "the selected placement kind is not admitted by this capability",
+        );
+    }
+    if !is_sorted_unique(&claim.target_capabilities) {
+        blocker(
+            blockers,
+            "noncanonical_placement_capabilities",
+            &capability.id,
+            "placement target capabilities must be sorted and unique",
+        );
+    } else if !policy
+        .required_target_capabilities
+        .iter()
+        .all(|required| claim.target_capabilities.binary_search(required).is_ok())
+    {
+        blocker(
+            blockers,
+            "placement_capability_missing",
+            &capability.id,
+            "the selected target lacks a required placement capability",
+        );
+    }
+    if policy.requires_disconnect_safety && !claim.disconnect_safe {
+        blocker(
+            blockers,
+            "disconnect_safety_required",
+            &capability.id,
+            "the selected target cannot survive operator disconnection",
+        );
     }
 }
 
