@@ -1,0 +1,12 @@
+[package]
+name = "epact-protocol"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Portable contracts and replay records for Epact scientific programs."
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
