@@ -96,7 +96,7 @@ pub enum ProgramLifecycle {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactProgramRef {
     pub id: String,
     pub version: String,
@@ -104,7 +104,7 @@ pub struct EpactProgramRef {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactImport {
     pub id: String,
     pub version: String,
@@ -112,7 +112,7 @@ pub struct EpactImport {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactPrincipal {
     pub id: String,
     pub kind: PrincipalKind,
@@ -120,7 +120,7 @@ pub struct EpactPrincipal {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactObjectDeclaration {
     pub id: String,
     pub type_name: String,
@@ -131,7 +131,7 @@ pub struct EpactObjectDeclaration {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactCapabilityRequirement {
     pub id: String,
     pub capability_type: String,
@@ -144,7 +144,7 @@ pub struct EpactCapabilityRequirement {
 
 /// A closed program-wide ceiling. Zero means that the corresponding resource is not authorized.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactResourceEnvelope {
     #[serde(default)]
     pub maximum_cost_usd: f64,
@@ -201,7 +201,7 @@ impl EpactResourceEnvelope {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactAuthorityScope {
     #[serde(default)]
     pub whole_program: bool,
@@ -212,7 +212,7 @@ pub struct EpactAuthorityScope {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactAuthorityGrant {
     pub id: String,
     pub principal_id: String,
@@ -227,7 +227,7 @@ pub struct EpactAuthorityGrant {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(tag = "kind", rename_all = "snake_case")]
+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum EpactDischarge {
     /// A finite set of independently sufficient discharge paths. Effects and resources remain
     /// declared on the enclosing obligation and therefore bind every alternative conservatively.
@@ -255,7 +255,7 @@ pub enum EpactDischarge {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactObligation {
     pub id: String,
     pub label: String,
@@ -279,7 +279,7 @@ pub struct EpactObligation {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(tag = "kind", rename_all = "snake_case")]
+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum EpactPredicate {
     All { predicates: Vec<EpactPredicate> },
     Any { predicates: Vec<EpactPredicate> },
@@ -290,7 +290,7 @@ pub enum EpactPredicate {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactGate {
     pub id: String,
     pub label: String,
@@ -298,7 +298,7 @@ pub struct EpactGate {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactEvidenceRule {
     pub id: String,
     pub claim_object_id: String,
@@ -316,7 +316,7 @@ fn default_minimum_observations() -> u32 {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactAmendmentPolicy {
     pub authorized_principal_ids: Vec<String>,
     pub rationale_required: bool,
@@ -325,7 +325,7 @@ pub struct EpactAmendmentPolicy {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactTerminalRule {
     pub required_obligation_ids: Vec<String>,
     #[serde(default)]
@@ -334,7 +334,7 @@ pub struct EpactTerminalRule {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactProgram {
     pub contract: String,
     pub id: String,
@@ -364,7 +364,7 @@ pub struct EpactProgram {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct CompiledAuthority {
     pub principal_id: String,
     pub operation: KernelOperation,
@@ -382,7 +382,7 @@ pub struct CompiledAuthority {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactCompilerFinding {
     pub code: String,
     pub subject_id: String,
@@ -390,7 +390,7 @@ pub struct EpactCompilerFinding {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactProgramImage {
     pub contract: String,
     pub compiler_version: String,
@@ -409,7 +409,7 @@ pub struct EpactProgramImage {
 /// This record does not mutate or reinterpret predecessor events. A kernel activates the successor
 /// only after binding this link to the predecessor's exact causal head.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactAmendment {
     pub contract: String,
     pub predecessor_image_sha256: String,
@@ -431,7 +431,7 @@ pub enum EpactObligationState {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(tag = "kind", rename_all = "snake_case")]
+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum EpactRuntimeEventKind {
     ObjectRecorded {
         object_id: String,
@@ -463,7 +463,7 @@ pub enum EpactRuntimeEventKind {
 
 /// One hash-chained runtime fact. A valid digest proves integrity and order, not authority or truth.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactRuntimeEvent {
     pub contract: String,
     pub id: String,
@@ -620,7 +620,7 @@ impl EpactRuntimeEvent {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactObligationProjection {
     pub obligation_id: String,
     pub state: EpactObligationState,
@@ -629,7 +629,7 @@ pub struct EpactObligationProjection {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactAcceptedReview {
     pub obligation_id: String,
     pub review_object_id: String,
@@ -638,7 +638,7 @@ pub struct EpactAcceptedReview {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactRuntimeState {
     pub program_image_sha256: String,
     pub next_sequence: u64,
@@ -654,7 +654,7 @@ pub struct EpactRuntimeState {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactOperationRequest {
     pub principal_id: String,
     pub operation: KernelOperation,
@@ -671,7 +671,7 @@ pub struct EpactOperationRequest {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactEligibilityBlocker {
     pub code: String,
     pub subject_id: String,
@@ -679,7 +679,7 @@ pub struct EpactEligibilityBlocker {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EpactEligibility {
     pub allowed: bool,
     pub blockers: Vec<EpactEligibilityBlocker>,

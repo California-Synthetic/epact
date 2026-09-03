@@ -30,7 +30,7 @@ pub enum ReversibilityClass {
 
 /// Portable unwind semantics for an effect.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct ReversibilityPolicy {
     pub class: ReversibilityClass,
     #[serde(default, skip_serializing_if = "Option::is_none")]
