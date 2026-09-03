@@ -12,6 +12,9 @@ This repository is the canonical home of:
   and the `epactc` reference CLI;
 - conformance fixtures and tests that every consuming runtime must pass.
 
+The accepted long-horizon semantics are recorded in the
+[`Epact language charter`](docs/language-charter.md).
+
 Concord supplies the scientific control plane and durable runtime. Epact does not own campaign
 storage, credentials, provider routing, or user-interface state.
 
