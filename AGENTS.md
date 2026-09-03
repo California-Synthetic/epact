@@ -2,7 +2,7 @@
 
 Epact owns the portable language contract, canonical program image, compiler, verifier, replay
 records, and command-line reference tooling used by Concord. It must remain independently usable
-and must not depend on the private Concord kernel, product storage, providers, credentials, or
+and must not depend on the private Concord product, its storage, providers, credentials, or
 California Synthetic operations.
 
 Epact programs describe scientific obligations, authority, effects, resources, evidence, review,
