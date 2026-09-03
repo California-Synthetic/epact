@@ -8,9 +8,12 @@ program image that a runtime can enforce and replay.
 This repository is the canonical home of:
 
 - `epact-protocol`: portable source, image, event, replay, effect, and eligibility records;
-- `epact-compiler`: deterministic normalization, validation, compilation, amendment verification,
-  and the `epactc` reference CLI;
-- conformance fixtures and tests that every consuming runtime must pass.
+- `epact-compiler`: deterministic normalization, validation, compilation, and amendment
+  verification;
+- `epact-runtime`: provider-neutral event authority, replay, eligibility, and terminal semantics;
+- `epact-cli`: the `epact` reference compiler and independent verifier;
+- `fixtures/alpha`: canonical source, image, history, projection, and eligibility vectors that every
+  consuming runtime must reproduce exactly.
 
 The accepted long-horizon semantics are recorded in the
 [`Epact language charter`](docs/language-charter.md).
@@ -34,9 +37,15 @@ cargo fmt --all -- --check
 cargo test --workspace
 ```
 
-Compile or verify a canonical JSON program image with:
+Compile, verify, replay, or evaluate canonical JSON records with:
 
 ```bash
-cargo run -p epact-compiler --bin epactc -- compile program.json
-cargo run -p epact-compiler --bin epactc -- verify-image image.json
+cargo run -p epact-cli -- compile program.json
+cargo run -p epact-cli -- verify-image image.json
+cargo run -p epact-cli -- replay image.json events.json
+cargo run -p epact-cli -- evaluate image.json events.json request.json
 ```
+
+The committed alpha vectors are regenerated deliberately with
+`cargo run -p epact-runtime --example generate_alpha_fixtures`; the conformance test then recompiles,
+replays, and reevaluates them from disk.

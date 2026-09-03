@@ -1,0 +1,15 @@
+[package]
+name = "epact-runtime"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Provider-neutral replay and eligibility semantics for Epact programs."
+
+[dependencies]
+epact-compiler = { path = "../epact-compiler" }
+epact-protocol = { path = "../epact-protocol" }
+thiserror.workspace = true
+
+[dev-dependencies]
+serde.workspace = true
+serde_json.workspace = true

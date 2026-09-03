@@ -47,6 +47,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "epact-cli"
+version = "0.1.0-alpha.1"
+dependencies = [
+ "epact-compiler",
+ "epact-protocol",
+ "epact-runtime",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "epact-compiler"
 version = "0.1.0-alpha.1"
 dependencies = [
@@ -64,6 +75,17 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
+ "thiserror",
+]
+
+[[package]]
+name = "epact-runtime"
+version = "0.1.0-alpha.1"
+dependencies = [
+ "epact-compiler",
+ "epact-protocol",
+ "serde",
+ "serde_json",
  "thiserror",
 ]
 
