@@ -1065,7 +1065,7 @@ fn require_discharge(
     obligation: &EpactObligation,
 ) -> Result<(), EpactRuntimeError> {
     for object_id in &obligation.output_object_ids {
-        if state.present_object_ids.binary_search(&object_id).is_err() {
+        if state.present_object_ids.binary_search(object_id).is_err() {
             return Err(EpactRuntimeError::MissingDischargeObject {
                 obligation_id: obligation.id.clone(),
                 object_id: object_id.clone(),

@@ -63,10 +63,10 @@ impl ReversibilityPolicy {
         if !matches!(
             self.class,
             ReversibilityClass::ReadOnly | ReversibilityClass::Unspecified
-        ) && !self
+        ) && self
             .reversal_action
             .as_deref()
-            .is_some_and(|value| !value.trim().is_empty())
+            .is_none_or(|value| value.trim().is_empty())
         {
             return Err(EffectPolicyError::MissingReversalAction);
         }

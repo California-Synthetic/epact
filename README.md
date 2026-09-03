@@ -2,8 +2,8 @@
 
 Epact is the model-independent language and executable contract for governed scientific work. It
 turns a portable program of objects, capabilities, obligations, gates, evidence rules, authority,
-effects, resources, amendments, and terminal conditions into a deterministic, content-addressed
-program image that a runtime can enforce and replay.
+effects, resources, placement constraints, amendments, and terminal conditions into a
+deterministic, content-addressed program image that a runtime can enforce and replay.
 
 This repository is the canonical home of:
 
@@ -21,14 +21,24 @@ The accepted long-horizon semantics are recorded in the
 Concord supplies the scientific control plane and durable runtime. Epact does not own campaign
 storage, credentials, provider routing, or user-interface state.
 
+## Alpha boundary
+
+The alpha is a complete language seam, not a complete scientific operating system. It provides a
+strict compiler, provider-neutral runtime semantics, a reference CLI, and portable conformance
+fixtures. A consumer remains responsible for durable storage, qualified tool adapters, credentials,
+cost accounting, and effect execution; it must bind those effects back to the compiled image rather
+than allowing a model or adapter to reinterpret policy.
+
 ## Proto Tools boundary
 
 [Proto Tools](https://github.com/evo-design/proto-tools) is the first planned large capability
-backend. Its isolated tool environments, persistent workers, device management, parallel pools,
-typed I/O, caching, and biological tool catalog are valuable infrastructure, but they are not part
-of Epact's language semantics. Concord will consume them through a qualified adapter pinned to a
-reviewed upstream commit. Epact compilation and verification remain fully independent of Proto and
-biology-specific types.
+backend. The current adapter baseline was reviewed at upstream commit
+`d70c99a797c2c1c27632ed30429d669aec5e2839`. Its isolated tool environments, persistent workers,
+device management, parallel pools, typed I/O, caching, and biological tool catalog are valuable
+infrastructure, but they are not part of Epact's language semantics. Concord will consume them
+through a separately qualified adapter pinned to an exact upstream revision. This pin records the
+candidate boundary; it does not claim that the adapter is qualified or executable. Epact compilation
+and verification remain fully independent of Proto and biology-specific types.
 
 ## Verify
 

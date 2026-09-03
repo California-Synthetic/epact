@@ -775,7 +775,7 @@ fn obligation_order(program: &EpactProgram) -> Result<Vec<String>, EpactCompileE
         for gate_id in &obligation.gate_ids {
             collect_predicate_obligations(
                 gates[gate_id.as_str()],
-                &mut dependencies.get_mut(&obligation.id).unwrap(),
+                dependencies.get_mut(&obligation.id).unwrap(),
             );
         }
         dependencies
